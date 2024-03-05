@@ -22,46 +22,42 @@ const Overlay = ({ onClose } : {onClose: () => void}) => {
     const [searchText, setSearchText] = useState('');
     const [items, setItems] = useState<Item[]>([]);
     const [searchVariables, setSearchVariables] = useState({
-        search: '',
         page: 1,
         perPage: 10,
         type: 'ANIME',
     });
 
-    useEffect(() => {
-      setSearchVariables((prevVariables) => ({
-          ...prevVariables,
-          search: searchText,
-      }));     
-
-      async function getData() {
-        try {
-            const options = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'application/json',
-                },
-                body: JSON.stringify({
-                    query: query,
-                    variables: searchVariables,
-                }),
-            };
-            const response = await fetch(url, options);
-    
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-    
-            const jsonData = await response.json();
-            setItems(jsonData.data.Page.media);
-            return jsonData.data.Page.media;
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
+    async function getData() {
+      try {
+          console.log(searchText);
+          const options = {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  Accept: 'application/json',
+              },
+              body: JSON.stringify({
+                  query: query,
+                  variables: {...searchVariables, search: searchText},
+              }),
+          };
+          const response = await fetch(url, options);
+  
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+  
+          const jsonData = await response.json();
+          setItems(jsonData.data.Page.media);
+          return jsonData.data.Page.media;
+      } catch (error) {
+          console.error('Error fetching data:', error);
       }
-      getData();
-      console.log(items)
+    }
+
+    useEffect(() => {
+      const getClearTime = setTimeout(getData, 1000)
+      return () => clearTimeout(getClearTime)
     }, [searchText]);
 
     return (
