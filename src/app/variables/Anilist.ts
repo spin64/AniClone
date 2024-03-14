@@ -1,4 +1,21 @@
+export interface Item {
+    id: number;
+    type: string;
+    description: string;
+    title: {
+      english: string;
+      romaji: string;
+      native: string;
+    };
+    coverImage: {
+      large: string;
+      medium: string;
+    };  
+    bannerImage: string;
+  }
+
 export const url = 'https://graphql.anilist.co'
+
 export const query = `
 query ($id: Int, $page: Int, $perPage: Int, $search: String, $type: MediaType) {
     Page (page: $page, perPage: $perPage) {
@@ -22,6 +39,8 @@ query ($id: Int, $page: Int, $perPage: Int, $search: String, $type: MediaType) {
         medium
         }
         genres
+        type
+        bannerImage
     }
   }
 }
